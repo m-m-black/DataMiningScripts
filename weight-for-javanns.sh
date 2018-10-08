@@ -8,12 +8,41 @@ INPUT=26
 OUTPUT=2
 
 LOCATION="/Users/mblack/Documents/RMIT/2018 Sem 2/DM/Assignment 2/Files"
-FILE="$LOCATION/heart-v1-norm.arff"
+FILE="$LOCATION/heart-v1.csv"
 
-# sed -e "s/\bTEXT\b/g"
-# anything between \b and \b will be treated as the value to search for
+# Separate columns into individual files
+tail -n +2 "$FILE" | cut -d, -f1 > "$LOCATION/temp-col1.csv"
+tail -n +2 "$FILE" | cut -d, -f2 > "$LOCATION/temp-col2.csv"
+tail -n +2 "$FILE" | cut -d, -f3 > "$LOCATION/temp-col3.csv"
+tail -n +2 "$FILE" | cut -d, -f4 > "$LOCATION/temp-col4.csv"
+tail -n +2 "$FILE" | cut -d, -f5 > "$LOCATION/temp-col5.csv"
+tail -n +2 "$FILE" | cut -d, -f6 > "$LOCATION/temp-col6.csv"
+tail -n +2 "$FILE" | cut -d, -f7 > "$LOCATION/temp-col7.csv"
+tail -n +2 "$FILE" | cut -d, -f8 > "$LOCATION/temp-col8.csv"
+tail -n +2 "$FILE" | cut -d, -f9 > "$LOCATION/temp-col9.csv"
+tail -n +2 "$FILE" | cut -d, -f10 > "$LOCATION/temp-col10.csv"
+tail -n +2 "$FILE" | cut -d, -f11 > "$LOCATION/temp-col11.csv"
+tail -n +2 "$FILE" | cut -d, -f12 > "$LOCATION/temp-col12.csv"
+tail -n +2 "$FILE" | cut -d, -f13 > "$LOCATION/temp-col13.csv"
+tail -n +2 "$FILE" | cut -d, -f14 > "$LOCATION/temp-col14.csv"
+tail -n +2 "$FILE" | cut -d, -f15 > "$LOCATION/temp-col15.csv"
 
-# used sed -i '' '/?/d' heart-v1-norm.arff to remove lines with ?
+# Extract MIN and MAX weights from sorted weight file
+sort -n "$LOCATION/temp-col2.csv" > "$LOCATION/sorted-weight.csv"
+MIN="$(head -1 "$LOCATION/sorted-weight.csv")"
+echo $MIN
+MAX="$(tail -n -1 "$LOCATION/sorted-weight.csv")"
+echo $MAX
+
+# Test math operation
+#a=10
+#b=20
+#echo `expr $a / $b`
+
+# Perform scaling on weight values, send scaled values to new file
+tail -n +0 "$LOCATION/temp-col2.csv" > "$LOCATION/scaled-weight.csv"
+
+exit
 
 # Remove preamble, shuffle rows, send to temp1.txt
 tail -n +20 "$FILE" | 
