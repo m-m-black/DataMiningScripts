@@ -29,5 +29,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Directory-specific files
+tempWC
+xargs
 
 # End of https://www.gitignore.io/api/macos
