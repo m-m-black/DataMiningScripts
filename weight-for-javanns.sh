@@ -4,8 +4,8 @@
 TRAIN=296
 VALID=118
 TEST=177
-INPUT=26
-OUTPUT=2
+INPUT=27
+OUTPUT=1
 
 LOCATION="/Users/mblack/Documents/RMIT/2018 Sem 2/DM/Assignment 2/Files"
 FILE="$LOCATION/heart-v1.csv"
@@ -35,10 +35,13 @@ MAX="$(tail -n -1 "$LOCATION/sorted-weight.csv")"
 # Perform scaling on weight values, send scaled values to new file
 awk '{res = ($1-min)/(max-min) ; print res}'  min="$MIN" max="$MAX" "$LOCATION/temp-col2.csv" > "$LOCATION/scaled-weight.csv"
 
-exit
+paste -d, "$LOCATION/temp-col1.csv" "$LOCATION/temp-col3.csv" "$LOCATION/temp-col4.csv" "$LOCATION/temp-col5.csv" \
+	"$LOCATION/temp-col6.csv" "$LOCATION/temp-col7.csv" "$LOCATION/temp-col8.csv" "$LOCATION/temp-col9.csv" \
+	"$LOCATION/temp-col10.csv" "$LOCATION/temp-col11.csv" "$LOCATION/temp-col12.csv" "$LOCATION/temp-col13.csv" \
+	"$LOCATION/temp-col14.csv" "$LOCATION/temp-col15.csv" "$LOCATION/scaled-weight.csv" > "$LOCATION/heart-scaled.csv"
 
-# Remove preamble, shuffle rows, send to temp1.txt
-tail -n +20 "$FILE" | 
+# Shuffle rows, send to temp1.txt
+tail -n +0 "$LOCATION/heart-scaled.csv" | 
 	fgrep -v "%" |
 	gshuf |
 	sed -e "s/,/ /g" | 
@@ -61,40 +64,40 @@ tail -n +20 "$FILE" |
 	sed -e "s/ fixed_defect / 1 0 0 /g" |
 	sed -e "s/ normal / 0 1 0 /g" |
 	sed -e "s/ reversable_defect / 0 0 1 /g" |
-	sed -e "s/ <50/ 1 0 /g" |
-	sed -e "s/ >50_1/ 0 1 /g" > "$LOCATION/temp1.txt"
+	sed -e "s/ <50/ 1 0/g" |
+	sed -e "s/ >50_1/ 0 1/g" > "$LOCATION/temp1.txt"
 
 # Training file
-/bin/echo "SNNS pattern definition file V3.2"  > "$LOCATION/heart-train.pat"
-/bin/echo "generated at Mon Apr 25 15:58:23 1994"  >> "$LOCATION/heart-train.pat"
-/bin/echo ""  >> "$LOCATION/heart-train.pat"
-/bin/echo ""  >> "$LOCATION/heart-train.pat"
-/bin/echo "No. of patterns : $TRAIN"  >> "$LOCATION/heart-train.pat"
-/bin/echo "No. of input units : $INPUT"  >> "$LOCATION/heart-train.pat"
-/bin/echo "No. of output units : $OUTPUT"  >> "$LOCATION/heart-train.pat"
+/bin/echo "SNNS pattern definition file V3.2"  > "$LOCATION/weight-train.pat"
+/bin/echo "generated at Mon Apr 25 15:58:23 1994"  >> "$LOCATION/weight-train.pat"
+/bin/echo ""  >> "$LOCATION/weight-train.pat"
+/bin/echo ""  >> "$LOCATION/weight-train.pat"
+/bin/echo "No. of patterns : $TRAIN"  >> "$LOCATION/weight-train.pat"
+/bin/echo "No. of input units : $INPUT"  >> "$LOCATION/weight-train.pat"
+/bin/echo "No. of output units : $OUTPUT"  >> "$LOCATION/weight-train.pat"
 
-head -$TRAIN "$LOCATION/temp1.txt" >> "$LOCATION/heart-train.pat"
+head -$TRAIN "$LOCATION/temp1.txt" >> "$LOCATION/weight-train.pat"
 
 # Validation file
-/bin/echo "SNNS pattern definition file V3.2"  > "$LOCATION/heart-valid.pat"
-/bin/echo "generated at Mon Apr 25 15:58:23 1994"  >> "$LOCATION/heart-valid.pat"
-/bin/echo ""  >> "$LOCATION/heart-valid.pat"
-/bin/echo ""  >> "$LOCATION/heart-valid.pat"
-/bin/echo "No. of patterns : $VALID"  >> "$LOCATION/heart-valid.pat"
-/bin/echo "No. of input units : $INPUT"  >> "$LOCATION/heart-valid.pat"
-/bin/echo "No. of output units : $OUTPUT"  >> "$LOCATION/heart-valid.pat"
+/bin/echo "SNNS pattern definition file V3.2"  > "$LOCATION/weight-valid.pat"
+/bin/echo "generated at Mon Apr 25 15:58:23 1994"  >> "$LOCATION/weight-valid.pat"
+/bin/echo ""  >> "$LOCATION/weight-valid.pat"
+/bin/echo ""  >> "$LOCATION/weight-valid.pat"
+/bin/echo "No. of patterns : $VALID"  >> "$LOCATION/weight-valid.pat"
+/bin/echo "No. of input units : $INPUT"  >> "$LOCATION/weight-valid.pat"
+/bin/echo "No. of output units : $OUTPUT"  >> "$LOCATION/weight-valid.pat"
 
 FROM=`expr $TRAIN + 1`
-tail -n +$FROM "$LOCATION/temp1.txt" | head -$VALID >> "$LOCATION/heart-valid.pat"
+tail -n +$FROM "$LOCATION/temp1.txt" | head -$VALID >> "$LOCATION/weight-valid.pat"
 
 # Test file
-/bin/echo "SNNS pattern definition file V3.2"  > "$LOCATION/heart-test.pat"
-/bin/echo "generated at Mon Apr 25 15:58:23 1994"  >> "$LOCATION/heart-test.pat"
-/bin/echo ""  >> "$LOCATION/heart-test.pat"
-/bin/echo ""  >> "$LOCATION/heart-test.pat"
-/bin/echo "No. of patterns : $TEST"  >> "$LOCATION/heart-test.pat"
-/bin/echo "No. of input units : $INPUT"  >> "$LOCATION/heart-test.pat"
-/bin/echo "No. of output units : $OUTPUT"  >> "$LOCATION/heart-test.pat"
+/bin/echo "SNNS pattern definition file V3.2"  > "$LOCATION/weight-test.pat"
+/bin/echo "generated at Mon Apr 25 15:58:23 1994"  >> "$LOCATION/weight-test.pat"
+/bin/echo ""  >> "$LOCATION/weight-test.pat"
+/bin/echo ""  >> "$LOCATION/weight-test.pat"
+/bin/echo "No. of patterns : $TEST"  >> "$LOCATION/weight-test.pat"
+/bin/echo "No. of input units : $INPUT"  >> "$LOCATION/weight-test.pat"
+/bin/echo "No. of output units : $OUTPUT"  >> "$LOCATION/weight-test.pat"
 
 FROM=`expr $FROM + $VALID`
-tail -n +$FROM "$LOCATION/temp1.txt" | head -$TEST >> "$LOCATION/heart-test.pat"
+tail -n +$FROM "$LOCATION/temp1.txt" | head -$TEST >> "$LOCATION/weight-test.pat"
