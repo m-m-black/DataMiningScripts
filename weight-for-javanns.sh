@@ -30,17 +30,10 @@ tail -n +2 "$FILE" | cut -d, -f15 > "$LOCATION/temp-col15.csv"
 # Extract MIN and MAX weights from sorted weight file
 sort -n "$LOCATION/temp-col2.csv" > "$LOCATION/sorted-weight.csv"
 MIN="$(head -1 "$LOCATION/sorted-weight.csv")"
-echo $MIN
 MAX="$(tail -n -1 "$LOCATION/sorted-weight.csv")"
-echo $MAX
-
-# Test math operation
-#a=10
-#b=20
-#echo `expr $a / $b`
 
 # Perform scaling on weight values, send scaled values to new file
-tail -n +0 "$LOCATION/temp-col2.csv" > "$LOCATION/scaled-weight.csv"
+awk '{res = ($1-min)/(max-min) ; print res}'  min="$MIN" max="$MAX" "$LOCATION/temp-col2.csv" > "$LOCATION/scaled-weight.csv"
 
 exit
 
